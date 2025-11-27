@@ -30,10 +30,10 @@ export default {
       this.status = "Sending..."
 
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000"
-
+        const apiUrl = import.meta.env.VITE_API_URL
+        
         if (!apiUrl) {
-          throw new Error("API URL not configured")
+          throw new Error("API URL not configured. Please set VITE_API_URL in your environment.")
         }
 
         const res = await fetch(apiUrl + "/api/messages", {
