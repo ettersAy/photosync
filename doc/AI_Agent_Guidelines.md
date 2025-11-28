@@ -1,138 +1,123 @@
-# AI Agent Guidelines
+# AI Agent Guidelines (with Dev vs Prod Env Rules)
 
-Follow these steps **every time** you start a task.
+Follow these steps **every time** you work on this project.
 
-## 1. Create a New Branch
+# 1. Create a New Branch (Always)
 
-Always create a new branch **before changing any file**.
+Branch naming format:
+  US-[User Story ID]-User_Story_Title
 
-Branch naming format: `US-[User Story ID]-User_Story_Title`
+Example:
+  US-005-Create_API_Endpoint_Contact_Us
 
-Example: `US-005-Create_API_Endpoint_Contact_Us`
+# 2. Create `1.Instruction.md`
 
-## 2. Create `1.Instruction.md`
+Location:
+  doc/user-stories/2 - 🚧 In Progress/
 
-Inside: `doc/user-stories/2 - 🚧 In Progress/`
+Steps:
+1. Create a folder named exactly like the branch:
+     us-[User Story ID]-User_Story_Title
+2. Inside it, create `1.Instruction.md` containing:
+   - Story title  
+   - Story goal  
 
-Do the following:
+# 3. Implement the Work
 
-1. Create a new folder named exactly like the branch: `us-[User Story ID]-User_Story_Title`
+Make your code changes safely inside your branch.
 
-2. Inside that folder, create: `1.Instruction.md`
+# 4. Document What You Did
 
-This file must include:
+In the same folder:
 
-* User story title
-* User story goal
+* Describe:
+  - Actions taken
+  - Commands executed
+  - Files modified
+  - Any issues or incidents
 
-## 3. Start Working
+When finished, move the folder to:
+  doc/user-stories/3 - ✅ Done/
 
-Implement the user story and complete the required changes.
+# 5. Commit & Push
 
-## 4. When Finished
+Commit message format:
+  US-005: Implement Contact Us API endpoint
 
-Inside the same story folder:
+===
+# TECHNICAL OVERVIEW (MUST READ)
+===
 
-1. Document everything you did:
+The project has **two separate applications**:
 
-   * Actions
-   * Commands executed
-   * Files modified
-   * Any issues or incidents encountered
+===
+## 1. Backend — Laravel 12 (API only)
 
-2. Move the story folder from: `doc/user-stories/2 - 🚧 In Progress/` to: `doc/user-stories/3 - ✅ Done/`
+- Local dev URL:
+    http://localhost:8000
+- Runs with:
+    php artisan serve --host=0.0.0.0 --port=8000
+- Deployment:
+    Google Cloud Run
+- Production URL:
+    https://photosync-backend-xxxxxx-uc.a.run.app
 
-## 5. Commit & Push
+### Backend Environment Rules
 
-Write a short, clear commit message describing what was accomplished. Example: `US-005: Implement Contact Us API endpoint`
+- `.env` is **for local development only**
+- Cloud Run NEVER uses `.env`
+- Cloud Run gets all variables from the Cloud Run dashboard
+- **Production DB and Dev DB are separated**
 
----
+===
+## 2. Frontend — Vue 3 + Vite
 
-# **Technical Overview (Required Knowledge for Agents)**
+- Local dev URL:
+    http://localhost:5173
+- Deployment:
+    Vercel
+- Production URL:
+    https://photosync-frontend.vercel.app
 
-This project is composed of **two separate applications**:
+### Frontend Environment Rules
 
----
-
-## **1. Backend — Laravel 12 (API Only)**
-
-* Purpose: serves all API endpoints (`/api/...`)
-* Deployment: **Google Cloud Run**
-* Prod URL example:
-  `https://photosync-backend-xxxxxx-uc.a.run.app`
-* DB: **Neon PostgreSQL (prod DB)**
-* Backend local dev URL:
-  `http://localhost:8000`
-* Local DB: **Neon PostgreSQL (dev DB)**
-* `.env` is used **only locally**
-* Cloud Run uses **environment variables**, not `.env`
-
-Local start command:
-
-```
-php artisan serve --host=0.0.0.0 --port=8000
-```
-
----
-
-## **2. Frontend — Vue 3 + Vite**
-
-* Deployment: **Vercel**
-* Prod URL example:
-  `https://photosync-frontend.vercel.app`
-* Local dev URL:
-  `http://localhost:5173`
-
-Environment variables:
-
-* **Local**: `frontend/.env`
-* **Prod**: Vercel → Project Settings → Environment Variables
-
-Key variable:
-
-```
-VITE_API_URL=<backend-url>
-```
+- Local env file:
+    frontend/.env
+- Production env variables:
+    Set in Vercel dashboard only
+- Key variable:
+    VITE_API_URL=<backend-url>
 
 Examples:
+  Local:  VITE_API_URL=http://localhost:8000
+  Prod:   VITE_API_URL=https://photosync-backend-xxxxxx-uc.a.run.app
 
-### Local:
+===
+## 3. Database Strategy (Important)
 
-```
-VITE_API_URL=http://localhost:8000
-```
+There are **two completely separate Neon PostgreSQL databases**:
 
-### Prod:
+### Dev DB (for local)
 
-```
-VITE_API_URL=https://photosync-backend-xxxxxx-uc.a.run.app
-```
+- Stored in `.env`
+- All local testing writes here
+- Safe to modify
 
----
+### Prod DB (for Cloud Run)
 
-## **3. Database Strategy**
+- Passed as environment variables in Cloud Run
+- Used ONLY in production
+- Must never be touched during local development
 
-There are two completely separate Neon DBs:
+===
+## 4. Critical Safety Rules for Agents
 
-### Dev DB (used locally)
+- ❗ NEVER commit `.env`
+- ❗ NEVER use production DB credentials locally
+- ❗ NEVER run migrations against the production DB
+- ✔️ Local development must use the dev DB only
+- ✔️ Production uses Cloud Run env vars only
+- ✔️ Always test both:
+    - Local (localhost:5173 → localhost:8000)
+    - Production (Vercel → Cloud Run)
 
-* All local testing writes here
-* Stored in `.env`
-
-### Prod DB (used on Cloud Run)
-
-* Cloud Run receives DB creds via environment variables
-* Not affected by dev testing
-* Never use `.env` for production
-
----
-
-## **4. Important Notes for Agents**
-
-* NEVER modify or commit the `.env` file.
-* NEVER use production DB credentials in local environment.
-* ALWAYS run migrations only against the intended DB (dev or prod).
-* For any feature that touches the API, make sure both:
-
-  * Local version works (`localhost:5173` → `localhost:8000`)
-  * Production version works (Vercel → Cloud Run)
