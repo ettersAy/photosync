@@ -22,6 +22,9 @@ Thumbs.db
 
 .continue/
 doc/Draft.md
+.laravel-dev.pid
+.vite-dev.pid
+exec.sh
 
 # Laravel
 /vendor
