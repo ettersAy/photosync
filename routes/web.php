@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
 
-Route::get('/', function () {
-    return redirect('https://photosync-sigma.vercel.app/');
-});
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');

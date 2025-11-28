@@ -12,16 +12,27 @@
 /.vscode
 /.zed
 /auth.json
-/node_modules
 /public/build
 /public/hot
-/public/storage
-/storage/*.key
 /storage/pail
-/vendor
+
 Homestead.json
 Homestead.yaml
 Thumbs.db
 
 .continue/
 doc/Draft.md
+
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+
+# Frontend env
+/frontend/.env
+/frontend/.env.local
+/frontend/node_modules
+
+
